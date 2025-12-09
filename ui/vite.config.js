@@ -9,7 +9,7 @@ export default defineConfig({
     outDir: path.resolve(__dirname, '../ui_built'),
     emptyOutDir: true,
     assetsDir: 'assets',
-    minify: 'terser',
+    minify: 'esbuild', // Utilise esbuild au lieu de terser (plus rapide et inclus dans Vite)
     rollupOptions: {
       output: {
         entryFileNames: 'assets/[name].js',

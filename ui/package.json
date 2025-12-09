@@ -1,6 +1,7 @@
 {
   "name": "boss-menu-phone-app",
   "version": "1.0.0",
+  "type": "module",
   "description": "Application de menu patron pour lb-phone",
   "scripts": {
     "dev": "vite",
