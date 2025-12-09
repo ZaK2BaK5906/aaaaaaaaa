@@ -17,13 +17,19 @@ Config.App = {
     price = 0
 }
 
--- Jobs qui peuvent accéder à l'app
-Config.BossJobs = {
-    'boss', -- Pour les grades boss
+-- Mode de vérification boss
+-- "grade_name" : Vérifie si grade_name == 'boss'
+-- "grade_max"  : Vérifie si le joueur a le grade maximum du job
+Config.BossCheckMode = 'grade_max'
+
+-- Grade boss par job (utilisé si BossCheckMode = 'grade_max')
+-- Si non spécifié, utilise le grade maximum du job
+Config.BossGrade = {
+    ['police'] = 4,
+    ['ambulance'] = 4,
+    -- Ajoute tes jobs et leur grade boss ici
 }
 
--- Grades minimums par job (optionnel)
-Config.MinGrade = {
-    -- ['police'] = 3,
-    -- ['ambulance'] = 2,
-}
+-- OU utilise cette config si tu veux vérifier par grade_name
+-- Config.BossCheckMode = 'grade_name'
+-- Config.BossGradeName = 'boss'

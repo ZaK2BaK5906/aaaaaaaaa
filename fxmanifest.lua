@@ -5,7 +5,7 @@ author 'Boss Menu Phone App'
 description 'Application de menu patron pour lb-phone'
 version '1.0.0'
 
-ui_page 'ui/index.html'
+ui_page 'ui_built/index.html'
 
 shared_scripts {
     '@es_extended/imports.lua',
@@ -21,7 +21,7 @@ server_scripts {
 }
 
 files {
-    'ui/**/*'
+    'ui_built/**/*'
 }
 
 dependencies {

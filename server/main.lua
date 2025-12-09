@@ -1,10 +1,31 @@
+-- Fonction pour vérifier si le joueur est boss
+local function IsBoss(xPlayer)
+    if not xPlayer then return false end
+
+    local job = xPlayer.getJob()
+    if not job then return false end
+
+    -- Vérifier selon le mode configuré
+    if Config.BossCheckMode == 'grade_name' then
+        local gradeName = Config.BossGradeName or 'boss'
+        return job.grade_name == gradeName
+    elseif Config.BossCheckMode == 'grade_max' then
+        if Config.BossGrade[job.name] then
+            return job.grade >= Config.BossGrade[job.name]
+        end
+        return false
+    end
+
+    return false
+end
+
 -- Fonction pour obtenir la société du joueur
 local function GetPlayerSociety(source)
     local xPlayer = ESX.GetPlayerFromId(source)
     if not xPlayer then return nil end
 
     local job = xPlayer.getJob()
-    if not job or job.grade_name ~= 'boss' then
+    if not job or not IsBoss(xPlayer) then
         return nil
     end
 
@@ -106,16 +127,12 @@ end)
 -- Callback pour obtenir la liste des employés
 ESX.RegisterServerCallback('boss_menu_phone:getEmployees', function(source, cb)
     local xPlayer = ESX.GetPlayerFromId(source)
-    if not xPlayer then
+    if not xPlayer or not IsBoss(xPlayer) then
         cb({})
         return
     end
 
     local job = xPlayer.getJob()
-    if job.grade_name ~= 'boss' then
-        cb({})
-        return
-    end
 
     MySQL.Async.fetchAll('SELECT * FROM users WHERE job = @job', {
         ['@job'] = job.name
@@ -141,16 +158,12 @@ end)
 -- Callback pour changer le grade d'un employé
 ESX.RegisterServerCallback('boss_menu_phone:setJobGrade', function(source, cb, targetIdentifier, newGrade)
     local xPlayer = ESX.GetPlayerFromId(source)
-    if not xPlayer then
+    if not xPlayer or not IsBoss(xPlayer) then
         cb(false)
         return
     end
 
     local job = xPlayer.getJob()
-    if job.grade_name ~= 'boss' then
-        cb(false)
-        return
-    end
 
     newGrade = tonumber(newGrade)
 
@@ -175,16 +188,12 @@ end)
 -- Callback pour virer un employé
 ESX.RegisterServerCallback('boss_menu_phone:fireEmployee', function(source, cb, targetIdentifier)
     local xPlayer = ESX.GetPlayerFromId(source)
-    if not xPlayer then
+    if not xPlayer or not IsBoss(xPlayer) then
         cb(false)
         return
     end
 
     local job = xPlayer.getJob()
-    if job.grade_name ~= 'boss' then
-        cb(false)
-        return
-    end
 
     MySQL.Async.execute('UPDATE users SET job = @job, job_grade = @grade WHERE identifier = @identifier', {
         ['@job'] = 'unemployed',
@@ -209,16 +218,12 @@ ESX.RegisterServerCallback('boss_menu_phone:hireEmployee', function(source, cb, 
     local xPlayer = ESX.GetPlayerFromId(source)
     local xTarget = ESX.GetPlayerFromId(targetId)
 
-    if not xPlayer or not xTarget then
+    if not xPlayer or not xTarget or not IsBoss(xPlayer) then
         cb(false)
         return
     end
 
     local job = xPlayer.getJob()
-    if job.grade_name ~= 'boss' then
-        cb(false)
-        return
-    end
 
     xTarget.setJob(job.name, 0)
     cb(true)

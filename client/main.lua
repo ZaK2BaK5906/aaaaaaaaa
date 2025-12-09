@@ -11,16 +11,24 @@ local function CheckBossStatus()
     playerJob = ESX.PlayerData.job.name
     playerGrade = ESX.PlayerData.job.grade
 
-    -- Vérifier si le joueur a un grade boss
-    local isBossGrade = ESX.PlayerData.job.grade_name == 'boss'
+    -- Vérifier selon le mode configuré
+    local isBossGrade = false
 
-    -- Vérifier le grade minimum si configuré
-    local hasMinGrade = true
-    if Config.MinGrade[playerJob] then
-        hasMinGrade = playerGrade >= Config.MinGrade[playerJob]
+    if Config.BossCheckMode == 'grade_name' then
+        -- Vérifier par grade_name
+        local gradeName = Config.BossGradeName or 'boss'
+        isBossGrade = ESX.PlayerData.job.grade_name == gradeName
+    elseif Config.BossCheckMode == 'grade_max' then
+        -- Vérifier par grade maximum
+        if Config.BossGrade[playerJob] then
+            isBossGrade = playerGrade >= Config.BossGrade[playerJob]
+        else
+            -- Si pas de config spécifique, ne donne pas accès
+            isBossGrade = false
+        end
     end
 
-    return isBossGrade and hasMinGrade
+    return isBossGrade
 end
 
 -- Event quand le job change
@@ -48,7 +56,7 @@ function AddBossApp()
         size = Config.App.size,
         icon = Config.App.icon,
         price = Config.App.price,
-        ui = GetCurrentResourceName() .. "/ui/index.html",
+        ui = GetCurrentResourceName() .. "/ui_built/index.html",
         onOpen = function()
             SetNuiFocus(false, false)
             -- Récupérer les données de la société
