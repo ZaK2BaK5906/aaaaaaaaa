@@ -56,21 +56,14 @@ function AddBossApp()
         size = Config.App.size,
         icon = Config.App.icon,
         price = Config.App.price,
-        ui = GetCurrentResourceName() .. "/ui_built/index.html",
-        onOpen = function()
-            SetNuiFocus(false, false)
-            -- Récupérer les données de la société
-            ESX.TriggerServerCallback('boss_menu_phone:getSocietyData', function(data)
-                SendNUIMessage({
-                    action = 'updateSocietyData',
-                    data = data
-                })
-            end)
-        end
+        ui = GetCurrentResourceName() .. "/ui_built/index.html"
+        -- Pas de onOpen - l'UI charge les données elle-même via les NUI callbacks
     })
 
     if not success then
         print("^1Erreur lors de l'ajout de l'app boss menu: " .. tostring(err) .. "^0")
+    else
+        print("^2[Boss Menu] App ajoutée avec succès!^0")
     end
 end
 
